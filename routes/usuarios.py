@@ -28,3 +28,15 @@ def crear_usuario():
     db.session.add(nuevo)
     db.session.commit()
     return jsonify({'mensaje': 'Usuario creado correctamente'}), 201
+
+@usuarios_bp.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    usuario = Usuario.query.filter_by(email=email).first()
+    if usuario and usuario.password_hash == password:
+        return jsonify({'mensaje': 'Login exitoso', 'usuario_id': usuario.id}), 200
+    else:
+        return jsonify({'error': 'Credenciales inválidas'}), 401
